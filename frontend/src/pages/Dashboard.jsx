@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import { motion } from 'framer-motion';
 import PageTransition from '../components/PageTransition';
+import api from '../api';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -31,30 +32,20 @@ function Dashboard() {
     setBalance(null);
 
     try {
-      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
-      const response = await fetch(`${API_URL}/api/balance`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await api.get('/balance');
 
-      const data = await response.json();
-
-      if (data.success) {
-        setBalance(data.balance);
+      if (response.data.success) {
+        setBalance(response.data.balance);
         triggerCelebration();
-      } else {
-        if (response.status === 401) {
-          navigate('/login');
-        } else {
-          setError(data.message || 'Failed to fetch balance');
-        }
       }
     } catch (err) {
-      setError('Network or Server error. Please verify the API is running and accessible.');
-      console.error('Balance fetch error:', err);
+      // Axios specific error handling for 401 UNAUTHORIZED
+      if (err.response && err.response.status === 401) {
+        navigate('/login');
+      } else {
+        setError(err.message || 'Failed to fetch balance');
+        console.error('Balance fetch error:', err);
+      }
     } finally {
       setLoading(false);
     }

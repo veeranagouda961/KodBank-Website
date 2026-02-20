@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import PageTransition from '../components/PageTransition';
+import api from '../api';
 import './Login.css';
 
 function Login() {
@@ -34,33 +35,20 @@ function Login() {
     };
 
     try {
-      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
-      const response = await fetch(`${API_URL}/api/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include', // Important: include cookies for JWT
-        body: JSON.stringify(loginData)
-      });
+      const response = await api.post('/login', loginData);
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.data.success) {
         console.log('✅ Login successful - redirecting to dashboard');
         // Store user data available in the response (username, email, role)
-        if (data.user) {
-          localStorage.setItem('kodbank_user', JSON.stringify(data.user));
+        if (response.data.user) {
+          localStorage.setItem('kodbank_user', JSON.stringify(response.data.user));
           localStorage.setItem('kodbank_last_login', new Date().toISOString());
         }
         navigate('/dashboard');
-      } else {
-        setError(data.message || 'Login failed');
-        console.error('❌ Login failed:', data.message);
       }
     } catch (err) {
-      setError('Network or Server error. Please verify the API is running and accessible.');
-      console.error('❌ Login network error:', err);
+      setError(err.message || 'Login failed.');
+      console.error('❌ Login error:', err);
     } finally {
       setLoading(false);
     }

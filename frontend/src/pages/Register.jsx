@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import PageTransition from '../components/PageTransition';
+import api from '../api';
 import './Register.css';
 
 function Register() {
@@ -57,36 +58,23 @@ function Register() {
     console.log('     password → backend hashes with bcrypt');
 
     try {
-      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
-      const response = await fetch(`${API_URL}/api/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(requestPayload)
-      });
-
-      const data = await response.json();
+      const response = await api.post('/register', requestPayload);
 
       console.log('📥 [FRONTEND] Registration Response');
-      console.log('   Success:', data.success);
-      console.log('   Message:', data.message);
+      console.log('   Success:', response.data.success);
+      console.log('   Message:', response.data.message);
 
-      if (data.success) {
+      if (response.data.success) {
         console.log('✅ Registration successful');
         console.log('   You can login with:');
         console.log('     Username:', requestPayload.uname);
         console.log('     Email:', requestPayload.email);
         // Redirect to login page
         navigate('/login');
-      } else {
-        setError(data.message || 'Registration failed');
-        console.error('❌ Registration failed:', data.message);
       }
     } catch (err) {
-      setError('Network or Server error. Please verify the API is running and accessible.');
-      console.error('❌ Registration network error:', err);
+      setError(err.message || 'Registration failed.');
+      console.error('❌ Registration error:', err);
     } finally {
       setLoading(false);
     }
