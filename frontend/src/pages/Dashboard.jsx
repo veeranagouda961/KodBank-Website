@@ -12,7 +12,8 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Retrieve user data from local storage (set during login)
+  // Restore auth state from localStorage
+  const token = localStorage.getItem('kodbank_token');
   const userData = JSON.parse(localStorage.getItem('kodbank_user')) || {
     username: 'Valued Member',
     email: 'member@kodbank.com',
@@ -27,6 +28,15 @@ function Dashboard() {
     : 'Today, 09:41 AM';
 
   const checkBalance = async () => {
+    // Read token from localStorage instead of relying only on React state
+    const currentToken = localStorage.getItem('kodbank_token');
+
+    if (!currentToken) {
+      setError('Authentication required. Please login.');
+      navigate('/login');
+      return;
+    }
+
     setError('');
     setLoading(true);
     setBalance(null);
@@ -62,6 +72,8 @@ function Dashboard() {
   const handleLogout = () => {
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     localStorage.removeItem('kodbank_user');
+    localStorage.removeItem('kodbank_last_login');
+    localStorage.removeItem('kodbank_token');
     navigate('/login');
   };
 

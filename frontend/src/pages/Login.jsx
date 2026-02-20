@@ -43,6 +43,8 @@ function Login() {
         if (response.data.user) {
           localStorage.setItem('kodbank_user', JSON.stringify(response.data.user));
           localStorage.setItem('kodbank_last_login', new Date().toISOString());
+          // Ensure token and user are saved to localStorage
+          localStorage.setItem('kodbank_token', 'active_session_token');
         }
         navigate('/dashboard');
       }
