@@ -31,8 +31,23 @@ let dbReady = false;
 let lastDbError = null;
 
 // Middleware
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    // Check if origin is allowed exactly, or if it's a Vercel preview/production branch
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy violation'));
+    }
+  },
   credentials: true // Allow cookies
 }));
 app.use(express.json());
@@ -41,6 +56,11 @@ app.use(cookieParser());
 // Routes
 app.use('/api', authRoutes);
 app.use('/api', balanceRoutes);
+
+// Simple root health check for debugging connectivity
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Backend is reachable' });
+});
 
 // Health check route (also shows DB status)
 app.get('/api/health', (req, res) => {
