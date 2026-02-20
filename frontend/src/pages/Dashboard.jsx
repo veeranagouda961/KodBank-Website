@@ -31,7 +31,8 @@ function Dashboard() {
     setBalance(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/balance', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${API_URL}/api/balance`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -52,7 +53,7 @@ function Dashboard() {
         }
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError('Network or Server error. Please verify the API is running and accessible.');
       console.error('Balance fetch error:', err);
     } finally {
       setLoading(false);

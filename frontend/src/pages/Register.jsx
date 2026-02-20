@@ -57,7 +57,8 @@ function Register() {
     console.log('     password → backend hashes with bcrypt');
 
     try {
-      const response = await fetch('http://localhost:5000/api/register', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -84,7 +85,7 @@ function Register() {
         console.error('❌ Registration failed:', data.message);
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError('Network or Server error. Please verify the API is running and accessible.');
       console.error('❌ Registration network error:', err);
     } finally {
       setLoading(false);
