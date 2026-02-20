@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import PageTransition from '../components/PageTransition';
 import './Register.css';
 
 function Register() {
@@ -90,110 +92,143 @@ function Register() {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h1>🏦 KodBank</h1>
-        <h2>Create Your Account</h2>
-        <p className="subtitle">Start your banking journey with ₹100,000 welcome balance!</p>
+    <PageTransition>
+      <div className="register-container">
+        <motion.div
+          className="register-card"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.h1
+            initial={{ y: -20 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            🏦 KodBank
+          </motion.h1>
+          <motion.h2
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            Create Your Account
+          </motion.h2>
+          <p className="subtitle">Start your banking journey with ₹100,000 welcome balance!</p>
 
-        {error && <div className="error-message">{error}</div>}
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="uid">User ID (Optional - Auto-generated if empty)</label>
-            <input
-              type="text"
-              id="uid"
-              name="uid"
-              value={formData.uid}
-              onChange={handleChange}
-              placeholder="uid-1234567890-abc123"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="uname">Username *</label>
-            <input
-              type="text"
-              id="uname"
-              name="uname"
-              value={formData.uname}
-              onChange={handleChange}
-              required
-              placeholder="johndoe"
-              autoComplete="username"
-            />
-            <small>This will be your login username</small>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email *</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="john@example.com"
-              autoComplete="email"
-            />
-            <small>You can also login with this email</small>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Phone *</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              placeholder="+1234567890"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password *</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="••••••••"
-              minLength="6"
-              autoComplete="new-password"
-            />
-            <small>Minimum 6 characters</small>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="role">Role</label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              disabled
+          {error && (
+            <motion.div
+              className="error-message"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
             >
-              <option value="Customer">Customer</option>
-            </select>
-            <small>Only Customer role is available for registration</small>
-          </div>
+              {error}
+            </motion.div>
+          )}
 
-          <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Register'}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="uid">User ID (Optional - Auto-generated if empty)</label>
+              <input
+                type="text"
+                id="uid"
+                name="uid"
+                value={formData.uid}
+                onChange={handleChange}
+                placeholder="uid-1234567890-abc123"
+              />
+            </div>
 
-        <p className="login-link">
-          Already have an account? <a href="/login">Login here</a>
-        </p>
+            <div className="form-group">
+              <label htmlFor="uname">Username *</label>
+              <input
+                type="text"
+                id="uname"
+                name="uname"
+                value={formData.uname}
+                onChange={handleChange}
+                required
+                placeholder="johndoe"
+                autoComplete="username"
+              />
+              <small>This will be your login username</small>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">Email *</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                placeholder="john@example.com"
+                autoComplete="email"
+              />
+              <small>You can also login with this email</small>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="phone">Phone *</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                placeholder="+1234567890"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Password *</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="••••••••"
+                minLength="6"
+                autoComplete="new-password"
+              />
+              <small>Minimum 6 characters</small>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="role">Role</label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                disabled
+              >
+                <option value="Customer">Customer</option>
+              </select>
+              <small>Only Customer role is available for registration</small>
+            </div>
+
+            <motion.button
+              type="submit"
+              className="submit-btn"
+              disabled={loading}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {loading ? 'Creating Account...' : 'Register'}
+            </motion.button>
+          </form>
+
+          <p className="login-link">
+            Already have an account? <Link to="/login">Login here</Link>
+          </p>
+        </motion.div>
       </div>
-    </div>
+    </PageTransition>
   );
 }
 

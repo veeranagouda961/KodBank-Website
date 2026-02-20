@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
+import { motion } from 'framer-motion';
+import PageTransition from '../components/PageTransition';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -8,6 +10,20 @@ function Dashboard() {
   const [balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Retrieve user data from local storage (set during login)
+  const userData = JSON.parse(localStorage.getItem('kodbank_user')) || {
+    username: 'Valued Member',
+    email: 'member@kodbank.com',
+    role: 'Standard User'
+  };
+
+  const lastLoginStr = localStorage.getItem('kodbank_last_login');
+  const lastLoginFormatted = lastLoginStr
+    ? new Date(lastLoginStr).toLocaleString('en-US', {
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    })
+    : 'Today, 09:41 AM';
 
   const checkBalance = async () => {
     setError('');
@@ -17,7 +33,7 @@ function Dashboard() {
     try {
       const response = await fetch('http://localhost:5000/api/balance', {
         method: 'GET',
-        credentials: 'include', // Important: include cookies (JWT token)
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -27,11 +43,9 @@ function Dashboard() {
 
       if (data.success) {
         setBalance(data.balance);
-        // Trigger celebration animation
         triggerCelebration();
       } else {
         if (response.status === 401) {
-          // Token expired or invalid, redirect to login
           navigate('/login');
         } else {
           setError(data.message || 'Failed to fetch balance');
@@ -46,86 +60,160 @@ function Dashboard() {
   };
 
   const triggerCelebration = () => {
-    // Party popper celebration animation
-    const duration = 3000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-    function randomInRange(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-
-    const interval = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-      });
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-      });
-    }, 250);
-
-    // Additional burst effect
-    setTimeout(() => {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-    }, 100);
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
   };
 
   const handleLogout = () => {
-    // Clear cookie by setting it to expire
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    localStorage.removeItem('kodbank_user');
     navigate('/login');
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-card">
-        <div className="dashboard-header">
-          <h1>🏦 KodBank Dashboard</h1>
-          <button onClick={handleLogout} className="logout-btn">Logout</button>
-        </div>
+    <PageTransition>
+      <div className="dashboard-page-container">
 
-        <div className="dashboard-content">
-          <h2>Welcome to Your Banking Portal</h2>
-          <p className="dashboard-subtitle">Manage your account and check your balance</p>
-
-          {error && <div className="error-message">{error}</div>}
-
-          <div className="balance-section">
-            <button 
-              onClick={checkBalance} 
-              className="check-balance-btn" 
-              disabled={loading}
-            >
-              {loading ? 'Checking Balance...' : '💰 Check Balance'}
-            </button>
-
-            {balance !== null && (
-              <div className="balance-display">
-                <div className="balance-text">
-                  Your balance is: <span className="balance-amount">₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                </div>
-              </div>
-            )}
+        {/* Top Navigation */}
+        <nav className="dashboard-nav">
+          <div className="nav-logo">
+            <span className="logo-icon">🏦</span>
+            <h2>KodBank</h2>
           </div>
+          <motion.button
+            onClick={handleLogout}
+            className="logout-action-btn"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Logout
+          </motion.button>
+        </nav>
+
+        {/* Main Dashboard Layout */}
+        <div className="dashboard-main-layout">
+
+          {/* Left Column - Content */}
+          <motion.div
+            className="dashboard-left-column"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+          >
+            {/* Welcome Banner */}
+            <motion.div className="welcome-banner" variants={itemVariants}>
+              <h1>Welcome back 👋</h1>
+              <p>Manage your account, check balances, and track your activity.</p>
+            </motion.div>
+
+            <div className="dashboard-grid">
+
+              {/* User Profile Card */}
+              <motion.div className="dashboard-card profile-card" variants={itemVariants}>
+                <div className="profile-header">
+                  <div className="avatar-circle">👤</div>
+                  <div className="profile-details">
+                    <h3>{userData.username}</h3>
+                    <p>{userData.email}</p>
+                    <span className="role-tag">{userData.role || 'Customer'}</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Security Section */}
+              <motion.div className="dashboard-card security-card" variants={itemVariants}>
+                <h3>Security Status</h3>
+                <ul className="security-list">
+                  <li><span className="icon">🛡️</span> Account Secured</li>
+                  <li><span className="icon">🔐</span> JWT Session Active</li>
+                </ul>
+              </motion.div>
+
+              {/* Main Balance Card */}
+              <motion.div className="dashboard-card main-balance-card" variants={itemVariants}>
+                <div className="card-top-row">
+                  <span className="card-label">Current Balance</span>
+                  <span className="status-badge-green">● Active Status</span>
+                </div>
+                <div className="balance-content">
+                  {error && <div className="error-message">{error}</div>}
+                  {balance !== null ? (
+                    <motion.h2
+                      className="balance-value"
+                      initial={{ scale: 0.8 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      ₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </motion.h2>
+                  ) : (
+                    <h2 className="balance-value hidden-balance">****</h2>
+                  )}
+                  <p className="last-login-text">Last login: {lastLoginFormatted}</p>
+                </div>
+              </motion.div>
+
+              {/* Quick Actions */}
+              <motion.div className="dashboard-card quick-actions-card" variants={itemVariants}>
+                <h3>Quick Actions</h3>
+                <div className="action-btn-grid">
+                  <motion.button
+                    className="quick-action-btn primary"
+                    onClick={checkBalance}
+                    disabled={loading}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {loading ? 'Checking...' : '💰 Check Balance'}
+                  </motion.button>
+                  <motion.button className="quick-action-btn secondary" whileHover={{ scale: 1.02 }}>
+                    👤 View Profile
+                  </motion.button>
+                  <motion.button className="quick-action-btn secondary" whileHover={{ scale: 1.02 }}>
+                    📄 Transaction History
+                  </motion.button>
+                </div>
+              </motion.div>
+
+            </div>
+          </motion.div>
+
         </div>
+
+        {/* Footer */}
+        <motion.footer
+          className="dashboard-footer"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+        >
+          <div>Developed by <span className="highlight-text">Veeranagouda</span></div>
+          <span className="footer-separator">•</span>
+          <div>KodNest ID: <span className="highlight-text">KODYVB03M</span></div>
+          <span className="footer-separator">•</span>
+          <div>&copy; KodBank. Copyright received.</div>
+        </motion.footer>
+
       </div>
-    </div>
+    </PageTransition>
   );
 }
 
