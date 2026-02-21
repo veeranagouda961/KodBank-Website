@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-// Remove trailing slashes from the environment variable if present
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+// Vercel serverless: use relative /api/* routes (same origin).
+// Optional VITE_API_URL can override for local dev with separate backend.
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
+const baseURL = API_BASE ? `${API_BASE}/api` : '/api';
 
 const api = axios.create({
-    baseURL: `${API_URL}/api`,
+    baseURL,
     withCredentials: true, // Important: include cookies for JWT
     headers: {
         'Content-Type': 'application/json'
