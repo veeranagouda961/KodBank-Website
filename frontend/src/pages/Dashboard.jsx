@@ -6,11 +6,14 @@ import PageTransition from '../components/PageTransition';
 import api from '../api';
 import './Dashboard.css';
 
+const KODSUPPORT_AI_URL = 'https://kodsupport-ai.vercel.app/';
+
 function Dashboard() {
   const navigate = useNavigate();
   const [balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [chatOpen, setChatOpen] = useState(false);
 
   // Restore auth state from localStorage
   const token = localStorage.getItem('kodbank_token');
@@ -93,10 +96,11 @@ function Dashboard() {
   };
 
   return (
-    <PageTransition>
-      <div className="dashboard-page-container">
+    <>
+      <PageTransition>
+        <div className="dashboard-page-container">
 
-        {/* Top Navigation */}
+          {/* Top Navigation */}
         <nav className="dashboard-nav">
           <div className="nav-logo">
             <span className="logo-icon">🏦</span>
@@ -215,9 +219,26 @@ function Dashboard() {
           <span className="footer-separator">•</span>
           <div>&copy; KodBank. Copyright received.</div>
         </motion.footer>
+        </div>
+      </PageTransition>
 
+      {/* KodSupport AI - always mounted, outside transformed container so fixed positioning works */}
+      <div className="kodsupport-widget">
+        {chatOpen && (
+          <div className="kodsupport-chatbot-container">
+            <iframe src={KODSUPPORT_AI_URL} title="KodSupport AI" />
+          </div>
+        )}
+        <button
+          type="button"
+          className="kodsupport-chat-button"
+          onClick={() => setChatOpen((o) => !o)}
+          aria-label={chatOpen ? 'Close chat' : 'Open KodSupport AI chat'}
+        >
+          💬
+        </button>
       </div>
-    </PageTransition>
+    </>
   );
 }
 
