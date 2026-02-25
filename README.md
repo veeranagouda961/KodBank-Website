@@ -1,4 +1,4 @@
-# 🏦 KodBank Application
+# 🏦 KodBank Application 
 
 A secure full-stack banking application with JWT authentication, user registration, balance checking, and an integrated AI support chatbot (**KodSupport AI**) that assists users in real time.
 
