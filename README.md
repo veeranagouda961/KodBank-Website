@@ -1,73 +1,285 @@
-# KodBank Application
+# 🏦 KodBank Application
 
-A secure banking application with JWT authentication, user registration, and balance checking features.
+A secure full-stack banking application with JWT authentication, user registration, balance checking, and an integrated AI support chatbot (**KodSupport AI**) that assists users in real time.
 
-## Tech Stack
+---
 
-- **Backend**: Node.js + Express
-- **Frontend**: React + Vite
-- **Database**: MySQL (AIVEN)
-- **Authentication**: JWT (JSON Web Tokens)
+## 🚀 Live Overview
 
-## Setup Instructions
+KodBank is a modern banking demo platform designed to demonstrate secure authentication, protected APIs, database integration, and AI-powered customer support inside a single production-style project.
 
-### Backend Setup
+It showcases real-world full-stack architecture suitable for portfolios, internships, and interviews.
 
-1. Navigate to backend directory:
+---
+
+## ✨ Core Features
+
+* Secure user registration with default balance (₹100,000)
+* JWT authentication with protected routes
+* Balance checking with celebration animation
+* Persistent MySQL database (AIVEN cloud)
+* Role-ready schema design
+* Integrated AI chatbot for user assistance
+* Production-style project structure
+
+---
+
+## 🤖 KodSupport AI (Integrated Chatbot)
+
+KodSupport AI is an intelligent in-app assistant embedded in the frontend.
+
+### Capabilities
+
+* User guidance inside KodBank
+* Banking feature explanation
+* Troubleshooting help
+* FAQ handling
+* Navigation support
+* Developer support simulation (customer support use case)
+
+The chatbot runs independently without modifying existing business logic.
+
+---
+
+## 🧱 Tech Stack
+
+### Frontend
+
+* React
+* Vite
+* Modern UI animations
+
+### Backend
+
+* Node.js
+* Express.js
+* REST API architecture
+
+### Database
+
+* MySQL (AIVEN Cloud)
+
+### Authentication
+
+* JWT (HTTP-only cookies)
+
+### AI Layer
+
+* KodSupport AI chatbot
+* LLM-based assistant integration
+
+---
+
+## 📁 Project Structure
+
+```
+KodBank/
+ ├─ backend/
+ │   ├─ routes/
+ │   ├─ controllers/
+ │   ├─ middleware/
+ │   ├─ db/
+ │   └─ server.js
+ │
+ ├─ frontend/
+ │   ├─ components/
+ │   ├─ pages/
+ │   ├─ chatbot/   ← KodSupport AI
+ │   └─ main.jsx
+ │
+ └─ README.md
+```
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone <repo-url>
+cd KodBank
+```
+
+---
+
+### 2️⃣ Backend Setup
+
 ```bash
 cd backend
-```
-
-2. Install dependencies:
-```bash
 npm install
 ```
 
-3. The `.env` file is already configured with AIVEN credentials.
+`.env` already configured with AIVEN credentials.
 
-4. Start the server:
+Run backend:
+
 ```bash
 npm start
-# or for development with auto-reload:
+# or
 npm run dev
 ```
 
-The backend will run on `http://localhost:5000`
+Backend:
 
-### Frontend Setup
+```
+http://localhost:5000
+```
 
-1. Navigate to frontend directory:
+---
+
+### 3️⃣ Frontend Setup
+
 ```bash
 cd frontend
-```
-
-2. Install dependencies:
-```bash
 npm install
-```
-
-3. Start the development server:
-```bash
 npm run dev
 ```
 
-The frontend will run on `http://localhost:5173`
+Frontend:
 
-## Database Tables
+```
+http://localhost:5173
+```
 
-- **kodusers**: Stores user information (uid, username, email, password, balance, phone, role)
-- **CJWT**: Stores JWT tokens (tid, token, uid, expiry)
+---
 
-## API Endpoints
+## 🗄️ Database Tables
 
-- `GET /api/health` - Health check
-- `POST /api/register` - User registration
-- `POST /api/login` - User login (returns JWT cookie)
-- `GET /api/balance` - Get user balance (protected)
+### kodusers
 
-## Features
+Stores user information
 
-- ✅ User registration with default balance of ₹100,000
-- ✅ Secure login with JWT authentication
-- ✅ Protected balance checking
-- ✅ Celebration animation on balance reveal
+* uid
+* username
+* email
+* password (hashed)
+* balance
+* phone
+* role
+
+### CJWT
+
+Stores JWT session tokens
+
+* tid
+* token
+* uid
+* expiry
+
+---
+
+## 🔌 API Endpoints
+
+| Method | Endpoint      | Description        |
+| ------ | ------------- | ------------------ |
+| GET    | /api/health   | Health check       |
+| POST   | /api/register | Register user      |
+| POST   | /api/login    | Login (JWT cookie) |
+| GET    | /api/balance  | Protected balance  |
+
+---
+
+## 🔐 Security Notes (Important for Interviews)
+
+* Password hashing (bcrypt)
+* JWT stored in HTTP-only cookies
+* Protected middleware routes
+* Environment variable isolation
+* Cloud DB SSL connection
+* Token expiry handling
+
+---
+
+## 🧠 Architecture (Interview-Level)
+
+Client → React UI
+Client → KodSupport Chatbot
+Frontend → REST API (Express)
+Backend → Auth Middleware → Controllers
+Backend → MySQL (AIVEN)
+
+Chatbot runs parallel to the core banking flow.
+
+---
+
+## 📦 Deployment Guide
+
+### Backend
+
+* Render / Railway / VPS
+
+### Frontend
+
+* Vercel (recommended)
+
+### Environment Variables (Production)
+
+Backend:
+
+```
+DB_URL=
+JWT_SECRET=
+NODE_ENV=production
+```
+
+Frontend:
+
+```
+VITE_API_URL=
+```
+
+---
+
+## 📊 Resume Description (You can copy)
+
+Built a full-stack banking application with secure JWT authentication, MySQL cloud database, protected APIs, and an integrated AI chatbot for real-time user support using React, Node.js, and Express.
+
+---
+
+## 📷 Screenshot Section (Add Later)
+
+```
+/screenshots/login.png
+/screenshots/register.png
+/screenshots/balance.png
+/screenshots/chatbot.png
+```
+
+---
+
+## 🛣️ Future Improvements
+
+* Transactions module
+* Chat history persistence
+* Admin dashboard
+* WebSockets
+* Notifications
+* AI personalization
+* RBAC (role-based access)
+* Payment gateway simulation
+
+---
+
+## 👨‍💻 Credits
+
+Developed by **Veeranagouda**
+KodNest ID: **KODYVB03M**
+
+---
+
+## ⭐ Why This Project Matters
+
+This project demonstrates:
+
+* Real production architecture
+* Authentication design
+* Cloud DB usage
+* AI integration inside product
+* Portfolio-ready full-stack skills
+
+---
+
+## 📄 License
+
+For educational and portfolio use.
